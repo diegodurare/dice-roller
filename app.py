@@ -10,4 +10,5 @@ def lanzar_dados(amount, sides):
         time.sleep(5)
     return resultados
 
-lanzar_dados(amount=5, sides=6)
+lanzar_dados(amount=5, sides=20)
+
