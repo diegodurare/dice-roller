@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "dduranarellano/dice-roller:jenkins"
-        DOCKERHUB_CREDENTIALS_ID = "dockerhub-creds"
+        DOCKERHUB_CREDENTIALS_ID = 'dockerhub-creds'
     }
 
     stages {
@@ -13,10 +13,16 @@ pipeline {
             }
         }
 
+        stage('Checkout código') {
+            steps {
+                git url: 'https://github.com/diegodurare/dice-roller.git', branch: 'main'
+            }
+        }
+
         stage('Construir imagen Docker') {
             steps {
                 script {
-                    sh "docker build -t $DOCKER_IMAGE ."
+                    sh 'docker build -t $DOCKER_IMAGE .'
                 }
             }
         }
@@ -24,10 +30,10 @@ pipeline {
         stage('Test de contenedor') {
             steps {
                 script {
-                    sh "docker run --name test-container -d $DOCKER_IMAGE"
-                    sh "sleep 5"
-                    sh "docker logs test-container"
-                    sh "docker rm -f test-container"
+                    sh 'docker run --name test-container -d $DOCKER_IMAGE'
+                    sh 'sleep 5'
+                    sh 'docker logs test-container'
+                    sh 'docker rm -f test-container'
                 }
             }
         }
@@ -35,8 +41,8 @@ pipeline {
         stage('Push a DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
-                        sh "docker push $DOCKER_IMAGE"
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS_ID}") {
+                        sh 'docker push $DOCKER_IMAGE'
                     }
                 }
             }
@@ -45,7 +51,7 @@ pipeline {
 
     post {
         failure {
-            echo "El pipeline ha fallado."
+            echo 'El pipeline ha fallado.'
         }
     }
 }
